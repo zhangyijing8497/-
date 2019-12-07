@@ -24,4 +24,7 @@ Route::get('/test/addUser','User\LoginController@addUser');
 Route::get('/test/redis1','Test\TestController@redis1');
 Route::get('/test/redis2','Test\TestController@redis2');
 Route::get('/test/baidu','Test\TestController@baidu');
-Route::get('/test/index','Test\TestController@index');
+
+
+/**微信开发 */
+Route::get('/wx','WeiXin\WxController@wechat');

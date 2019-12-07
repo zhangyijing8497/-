@@ -42,9 +42,4 @@ class TestController extends Controller
 		echo $response->getBody();
 	}
 
-	public function index(Request $request)
-    {
-        $echostr=$request->input('echostr');
-        echo $echostr;
-    }
 }

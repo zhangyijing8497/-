@@ -42,7 +42,6 @@ class TestController extends Controller
 		echo $response->getBody();
 	}
 
-	/** */
 	public function xmlTest()
 	{
 		$xml_str = '<xml>

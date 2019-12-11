@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WeiXin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Model\WxUserModel;
 
 class WxController extends Controller
 {
@@ -66,6 +67,23 @@ class WxController extends Controller
         if($event=='subscribe')
         {
             $openid = $xml_obj->FromUserName;   // 获取用户的openID
+            // 判断用户是否已存在
+            $u = WxUserModel::where(['openid'=>$openid])->first();
+            if($u){
+                // 欢迎回来
+                echo "欢迎回来";die;
+            }else{
+                $user_data = [
+                    'openId' => $openid,
+                    'sub_time' => $xml_obj->CreateTime,
+                ];
+    
+                // openid入库
+                $uid = WxUserModel::insertGetId($user_data);
+                var_dump($uid);
+                die;
+            }
+            
             // 获取用户信息
             $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$this->access_token.'&openid='.$openid.'&lang=zh_CN';
             $user_info = file_get_contents($url);   

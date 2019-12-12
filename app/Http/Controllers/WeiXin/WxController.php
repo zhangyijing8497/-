@@ -40,8 +40,6 @@ class WxController extends Controller
         $tmpStr = sha1( $tmpStr );
 
 
-
-
         if($tmpStr == $signature){
           echo $echostr;
         }else{
@@ -70,8 +68,22 @@ class WxController extends Controller
             // 判断用户是否已存在
             $u = WxUserModel::where(['openid'=>$openid])->first();
             if($u){
-                // 欢迎回来
-                echo "欢迎回来";die;
+                $msg_type = $xml_obj->MsgType;
+                $touser = $xml_obj->FromUserName; //接收消息的用户openID
+                $fromuser = $xml_obj->ToUserName; //开发者公众号的id
+                $time = time();
+
+
+                $content = date('Y-m-d H:i:s') . "欢迎回来";
+                $response_text = '<xml>
+                <ToUserName><![CDATA['.$touser.']]></ToUserName>
+                <FromUserName><![CDATA['.$fromuser.']]></FromUserName>
+                <CreateTime>'.$time.'</CreateTime>
+                <MsgType><![CDATA[text]]></MsgType>
+                <Content><![CDATA['.$content.']]></Content>
+                </xml>';
+                echo $response_text;            // 回复用户消息
+            
             }else{
                 $user_data = [
                     'openId' => $openid,
@@ -80,8 +92,23 @@ class WxController extends Controller
     
                 // openid入库
                 $uid = WxUserModel::insertGetId($user_data);
-                var_dump($uid);
-                die;
+
+                $msg_type = $xml_obj->MsgType;
+                $touser = $xml_obj->FromUserName; //接收消息的用户openID
+                $fromuser = $xml_obj->ToUserName; //开发者公众号的id
+                $time = time();
+
+                $content = date('Y-m-d H:i:s') . "欢迎关注";
+                $response_text = '<xml>
+                <ToUserName><![CDATA['.$touser.']]></ToUserName>
+                <FromUserName><![CDATA['.$fromuser.']]></FromUserName>
+                <CreateTime>'.$time.'</CreateTime>
+                <MsgType><![CDATA[text]]></MsgType>
+                <Content><![CDATA['.$content.']]></Content>
+                </xml>';
+                echo $response_text;            // 回复用户消息
+
+
             }
             
             // 获取用户信息

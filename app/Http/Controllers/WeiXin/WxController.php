@@ -5,6 +5,8 @@ namespace App\Http\Controllers\WeiXin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Model\WxUserModel;
+use Illuminate\Support\Facades\Redis;
+use GuzzleHttp\Client;
 
 class WxController extends Controller
 {
@@ -16,11 +18,26 @@ class WxController extends Controller
         $this->access_token = $this->getAccessToken();
     }
 
+    public function test()
+    {
+        echo $this->access_token;die;
+    }
+
     protected function getAccessToken()
     {
+        $key = 'wx_access_token';
+        $access_token = Redis::get($key);
+
+        if($access_token){
+            return $access_token;
+        }
+
         $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WX_APPID').'&secret='.env('WX_APPSECRET');
         $data_json = file_get_contents($url);
         $arr = json_decode($data_json,true);
+        
+        Redis::set($key,$arr['access_token']);
+        Redis::expire($key,3600);
         return $arr['access_token'];
     }
 
@@ -109,6 +126,9 @@ class WxController extends Controller
         $touser = $xml_obj->FromUserName;       //接收消息的用户openid
         $fromuser = $xml_obj->ToUserName;       // 开发者公众号的 ID
         $time = time();
+
+        $media_id = $xml_obj->MediaId;
+
         if($msg_type=='text'){
             $content = date('Y-m-d H:i:s') . $xml_obj->Content;
             $response_text = '<xml>
@@ -119,6 +139,17 @@ class WxController extends Controller
             <Content><![CDATA['.$content.']]></Content>
             </xml>';
             echo $response_text;            // 回复用户消息
+
+            // 消息入库
+
+        }elseif($msg_type=='image'){    //图片消息
+            // 下载图片
+            $this->getMedia2($media_id,$msg_type);
+            // 回复图片
+        }elseif($msg_type=='voice'){    //语音消息
+            // 下载语音
+            $this->getMedia2($media_id,$msg_type);
+            // 回复语言
         }
     }
     /**
@@ -134,7 +165,57 @@ class WxController extends Controller
     }
 
 
+    /**
+     * 获取素材
+     */
+    public function getMedia()
+    {
+        $media_id = 'lYyuilKCZgTvC0SyfRC2yHVg3OO1nhCO4k2GrtJJDNj34bIiG9gz3TyqJ1tta476';
+        $url = 'https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$this->access_token.'&media_id='.$media_id;
+        // echo $url;die;
 
+        // 获取素材内容
+        $data = file_get_contents($url);
+        // 保存文件
+        $file_name = date('YmdHis').mt_rand(11111,99999) . '.amr';
+        file_put_contents($file_name,$data);
+
+        echo "下载素材成功";echo '<br>';
+        echo "文件名:".$file_name;
+    }
+
+    protected function getMedia2($media_id,$media_type)
+    {
+        $url = 'https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$this->access_token.'&media_id='.$media_id;
+
+        // 获取素材内容
+        $client = new Client();
+        $response = $client->request('GET',$url);
+
+        // 获取文件类型
+        $content_type =  $response->getHeader('Content-Type')[0];
+        // echo $content_type; echo '</br>';
+        $pos = strpos($content_type,'/');
+        // echo '/的位置: '.$pos;die;
+        $extension = '.' . substr($content_type,$pos+1);
+        // echo 'extension: '.$extension;die;
+
+        // 获取文件内容
+        $file_content = $response->getBody();
+
+        // 保存文件
+        $save_path = 'wx_media/';
+        if($media_type=='image'){   //保存图片文件
+            $file_name = date('YmdHis').mt_rand(11111,99999) . $extension;
+            $save_path = $save_path . 'imgs/' . $file_name;
+        }elseif($media_type=='voice'){    //保存语音文件
+            $file_name = date('YmdHis').mt_rand(11111,99999) . $extension;
+            $save_path = $save_path . 'voice/' . $file_name;
+        }
+
+        file_put_contents($save_path,$file_content);
+        echo "文件保存成功: " .$save_path;
+    }
     
 
     

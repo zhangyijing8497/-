@@ -64,8 +64,8 @@ class WxController extends Controller
         //处理xml数据
         $xml_obj = simplexml_load_string($xml_str);
         $event = $xml_obj->Event;       // 获取事件类型
+        $openid = $xml_obj->FromUserName;       //获取用户的openid
         if($event=='subscribe'){
-            $openid = $xml_obj->FromUserName;       //获取用户的openid
             //判断用户是否已存在
             $u = WxUserModel::where(['openid'=>$openid])->first();
             if($u){
@@ -105,7 +105,21 @@ class WxController extends Controller
                 </xml>';
                 echo $xml;
             }
+        }elseif($event=='CLICK'){  //菜单点击事件
+
+            // 如果是 获取天气
+            if($xml_obj->EventKey=='weather'){ 
+                $response_xml = '<xml>
+                        <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                        <FromUserName><![CDATA['.$xml_obj->ToUserName.']]></FromUserName>
+                        <CreateTime>'.time().'</CreateTime>
+                        <MsgType><![CDATA[text]]></MsgType>
+                        <Content><![CDATA['.date('Y-m-d H:i:s').'晴天' .']]></Content>
+                    </xml>';
+                echo $response_xml;
+            }
         }
+
         // 判断消息类型
         $msg_type = $xml_obj->MsgType;
         $touser = $xml_obj->FromUserName;       //接收消息的用户openid
@@ -229,5 +243,30 @@ class WxController extends Controller
         $key = 'wx_access_token';
         Redis::del($key);
         echo $this->getAccessToken();
+    }
+
+    /**
+     * 创建自定义菜单
+     */
+    public function createMenu()
+    {
+        // 创建自定义菜单地址
+        $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token='.$this->access_token;
+        $menu = [
+            'button'     =>[
+                [
+                    'type'  => 'click',
+                    'name'  => '获取天气',
+                    'key'   => 'weather'
+                ],
+            ]
+        ];
+        $menu_json = json_encode($menu,JSON_UNESCAPED_UNICODE);
+        $client = new Client();
+        $response = $client->request('POST',$url,[
+            'body'  => $menu_json
+        ]);
+        echo '<pre>';print_r($menu);echo'</pre>';
+        echo $response->getBody();   //接收  微信接口的响应数据
     }
 }

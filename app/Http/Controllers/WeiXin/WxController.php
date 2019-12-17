@@ -107,14 +107,26 @@ class WxController extends Controller
             }
         }elseif($event=='CLICK'){  //菜单点击事件
 
-            // 如果是 获取天气
             if($xml_obj->EventKey=='weather'){ 
+                // 如果是 获取天气
+
+                // 请求第三方接口  获取天气
+                $weather_api = 'https://free-api.heweather.net/s6/weather/now?location=beijing&key=8562db750c4a40b189fb4ce7532b5d43';
+                $weather_info = file_get_contents($weather_api);
+                $weather_info_arr = json_decode($weather_info,true);
+                // echo '<pre>';print_r($weather_info_arr);echo '</pre>';exit;
+                $code_txt = $weather_info_arr['HeWeather6'][0]['now']['cond_txt'];
+                $tmp = $weather_info_arr['HeWeather6'][0]['now']['tmp'];
+                $wind_dir = $weather_info_arr['HeWeather6'][0]['now']['wind_dir'];
+                $msg = $code_txt . '  温度: ' .$tmp. '  风向: ' .$wind_dir;
+                // echo $msg;die;
+
                 $response_xml = '<xml>
                         <ToUserName><![CDATA['.$openid.']]></ToUserName>
                         <FromUserName><![CDATA['.$xml_obj->ToUserName.']]></FromUserName>
                         <CreateTime>'.time().'</CreateTime>
                         <MsgType><![CDATA[text]]></MsgType>
-                        <Content><![CDATA['.date('Y-m-d H:i:s').'晴天' .']]></Content>
+                        <Content><![CDATA['.date('Y-m-d H:i:s').$msg .']]></Content>
                     </xml>';
                 echo $response_xml;
             }

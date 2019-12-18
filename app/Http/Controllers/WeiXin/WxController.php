@@ -271,6 +271,11 @@ class WxController extends Controller
                     'name'  => '获取天气',
                     'key'   => 'weather'
                 ],
+                [
+                    'type'  => 'view',
+                    'name'  => '投票',
+                    'url'   => 'http://1905zhangyijing.comcto.com'
+                ],
             ]
         ];
         $menu_json = json_encode($menu,JSON_UNESCAPED_UNICODE);

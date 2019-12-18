@@ -18,6 +18,12 @@ class VoteController extends Controller
         // 处理业务逻辑
         $openid = $user_info['openid'];
         $key = 's:vote:zhangsan';
+
+        // 判断是否已经投过票
+        if(Redis::sIsMember($key,$user_info['openid'])){
+            echo "您已投过票了哦!";die;
+        }
+
         Redis::sadd($key,$openid);
 
         $members = Redis::Smembers($key); //获取所有投票者的openid
@@ -46,9 +52,9 @@ class VoteController extends Controller
         $json_data = file_get_contents($url);
         $data = json_decode($json_data,true);
         if(isset($data['errcode'])){
-            // TODO  错误处理
-            die("出错了 40001");       // 40001 标识获取用户信息失败
+            // 错误处理
+            die('嘿!兄弟出错了 40001');  //40001标识获取用户信息失败
         }
-        return $data;           // 返回用户信息
+        return $data;
     }
 }

@@ -111,7 +111,7 @@ class WxController extends Controller
                 // 如果是 获取天气
 
                 // 请求第三方接口  获取天气
-                $weather_api = 'https://free-api.heweather.net/s6/weather/now?location=beijing&key=8562db750c4a40b189fb4ce7532b5d43';
+                $weather_api = 'https://free-api.heweather.net/s6/weather/now?location=beijing&key=5b6aff3a4deb4bd6aa1fbd0c48f1e05f';
                 $weather_info = file_get_contents($weather_api);
                 $weather_info_arr = json_decode($weather_info,true);
                 // echo '<pre>';print_r($weather_info_arr);echo '</pre>';exit;

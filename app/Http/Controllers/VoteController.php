@@ -21,10 +21,10 @@ class VoteController extends Controller
 
         // 判断是否已经投过票
         if(Redis::sIsMember($key,$user_info['openid'])){
-            echo "您已投过票了哦!";die;
+            echo "您已投过票了哦!";
+        }else{
+            Redis::sadd($key,$openid);
         }
-
-        Redis::sadd($key,$openid);
 
         $members = Redis::Smembers($key); //获取所有投票者的openid
         $total = Redis::Scard($keys); //统计投票总人数

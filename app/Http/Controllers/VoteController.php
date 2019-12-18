@@ -17,7 +17,7 @@ class VoteController extends Controller
         $user_info = $this->getUserInfo($data['access_token'],$data['openid']);
         // 处理业务逻辑
         $openid = $user_info['openid'];
-        $key = 'ss:vote:zhangsan';
+        $key = 's:vote:zhangsan';
         Redis::sadd($key,$openid);
 
         $members = Redis::Smembers($key); //获取所有投票者的openid

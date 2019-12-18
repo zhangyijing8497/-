@@ -59,4 +59,3 @@ class VoteController extends Controller
         return $data;           // 返回用户信息
     }
 }
-}

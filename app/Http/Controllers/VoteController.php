@@ -18,23 +18,17 @@ class VoteController extends Controller
         // 处理业务逻辑
         $openid = $user_info['openid'];
         $key = 'ss:vote:zhangsan';
-        //判断是否已经投过票
-        if(Redis::zrank($key,$user_info['openid'])){
-            echo "已经投过票了";
-        }else{
-            Redis::Zadd($key,time(),$openid);
-        }
-        $total = Redis::zCard($key);        // 获取总数
-        echo '投票总人数： '.$total;echo '</br>';
-        $members = Redis::zRange($key,0,-1,true);       // 获取所有投票人的openid
+        Redis::sadd($key,$openid);
+
+        $members = Redis::Smembers($key); //获取所有投票者的openid
+        $total = Redis::Scard($keys); //统计投票总人数
+        echo "投票总人数: ".$total;
+        echo '<hr>';
         echo '<pre>';print_r($members);echo '</pre>';
-        foreach($members as $k=>$v){
-            echo "用户： ".$k . ' 投票时间: '. date('Y-m-d H:i:s',$v);echo '</br>';
-        }
     }
+
     /**
-     * 根据code获取access_token
-     * @param $code
+     * 根据code 获取access_token
      */
     protected function getAccessToken($code)
     {
@@ -42,10 +36,9 @@ class VoteController extends Controller
         $json_data = file_get_contents($url);
         return json_decode($json_data,true);
     }
+
     /**
      * 获取用户基本信息
-     * @param $access_token
-     * @param $openid
      */
     protected function getUserInfo($access_token,$openid)
     {
@@ -53,9 +46,9 @@ class VoteController extends Controller
         $json_data = file_get_contents($url);
         $data = json_decode($json_data,true);
         if(isset($data['errcode'])){
-            // TODO  错误处理
-            die("出错了 40001");       // 40001 标识获取用户信息失败
+            // 错误处理
+            die('嘿!兄弟出错了 40001');  //40001标识获取用户信息失败
         }
-        return $data;           // 返回用户信息
+        return $data;
     }
 }

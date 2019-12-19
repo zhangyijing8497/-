@@ -33,7 +33,7 @@
 		<!-- end site brand	 -->
 		<div class="side-nav-panel-right">
 			<!-- <a href="#" data-activates="slide-out-right" class="side-nav-left"><i class="fa fa-user"></i></a> -->
-			<img src="{{$u['headimgurl']}}" alt="">
+			<img src="{{$u['headimgurl']}}" width="50px">
 		</div>
 	</div>
 	<!-- end navbar top -->

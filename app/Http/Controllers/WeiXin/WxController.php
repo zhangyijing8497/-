@@ -3,6 +3,7 @@ namespace App\Http\Controllers\WeiXin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Model\WxUserModel;
+use App\Model\MsgModel;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
 class WxController extends Controller
@@ -149,6 +150,7 @@ class WxController extends Controller
             </xml>';
             echo $response_text;            // 回复用户消息
             // TODO 消息入库
+            
         }elseif($msg_type=='image'){    // 图片消息
             // TODO 下载图片
             $this->getMedia2($media_id,$msg_type);

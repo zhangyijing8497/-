@@ -42,3 +42,6 @@ Route::get('/wx/menu','WeiXin\WxController@createMenu'); //创建自定义菜单
 
 //微信公众号
 Route::get('/vote','VoteController@index'); //微信投票
+
+// 商城
+Route::get('/goods/detail','Goods\IndexController@detail');//商品详情

@@ -150,7 +150,9 @@ class WxController extends Controller
             </xml>';
             echo $response_text;            // 回复用户消息
             // TODO 消息入库
-            
+            // $msg_data = [
+            //     'openid'
+            // ]
         }elseif($msg_type=='image'){    // 图片消息
             // TODO 下载图片
             $this->getMedia2($media_id,$msg_type);

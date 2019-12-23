@@ -27,7 +27,7 @@ class WxMsgController extends AdminController
         $openid = array_column($openid_arr,'openid');
         // echo '<pre>';print_r($openid);echo '</pre>';
 
-        $url = 'https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=28_qu1truDuWsHiIMUOsIUeOA_12qDxgMBwIPq5hV7reEa-Pjv6DITksulgXddDteK5f_WLsxamnRJjJVuOe5XqIheSkJ4U-fPLo2kHT68dmthJlqSvmYOZT67qsAwNPFTR8J4NLbrCRjpmtRQqYAGgAFAJLR';
+        $url = 'https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=28_zQuMY2Ub_sFZI-ThGD-iDk2hMzWrFSZfnwb7oCseBgLi7ap8ueEkNdKyqD31fVEqivxyKExrs1Gq4-LtfFBA5-EN8Fr60Wcwl3hx0c7hFiAWSFngkvronsqKNrOkdTvMRMuzSSoDy79TupmxYBBeAJAORR';
         $msg = date('Y-m-d H:i:s') . '冬至,你吃饺子了么?';
         
         $data = [

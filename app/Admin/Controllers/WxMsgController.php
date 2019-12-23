@@ -28,7 +28,7 @@ class WxMsgController extends AdminController
         // echo '<pre>';print_r($openid);echo '</pre>';
 
         $url = 'https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=28_zQuMY2Ub_sFZI-ThGD-iDk2hMzWrFSZfnwb7oCseBgLi7ap8ueEkNdKyqD31fVEqivxyKExrs1Gq4-LtfFBA5-EN8Fr60Wcwl3hx0c7hFiAWSFngkvronsqKNrOkdTvMRMuzSSoDy79TupmxYBBeAJAORR';
-        $msg = date('Y-m-d H:i:s') . '冬至,你吃饺子了么?';
+        $msg = date('Y-m-d H:i:s') . 'Hello! My name is XXX?';
         
         $data = [
             'touser'  => $openid,
